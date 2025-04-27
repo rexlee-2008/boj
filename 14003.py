@@ -1,34 +1,37 @@
+import sys
+from bisect import bisect_left
+
+input = sys.stdin.readline
+
 n = int(input())
 arr = list(map(int, input().split()))
 
-
+# LIS 계산
 lis = []
-
-temp = [-1] * n
-
-l = [-1] * n
+temp = [-1] * n  # LIS에서 각 위치의 인덱스를 저장
+prev = [-1] * n  # LIS를 복원하기 위한 이전 인덱스 저장
 
 for i in range(n):
-    pos = 0
-    for j in range(len(lis)):
-        if lis[j] >= arr[i]:
-            pos = j
-            break
-    else:
-        pos = len(lis)
-    
+    pos = bisect_left(lis, arr[i])  # LIS에서 arr[i]가 들어갈 위치 찾기
     if pos < len(lis):
         lis[pos] = arr[i]
     else:
         lis.append(arr[i])
     
-    temp[pos] = i
+    temp[pos] = i  # LIS에서 현재 위치의 인덱스 저장
     if pos > 0:
-        l[i] = temp[pos - 1]
+        prev[i] = temp[pos - 1]  # 이전 인덱스 저장
 
+# LIS 복원 (중복 포함)
+result = []
+index = temp[len(lis) - 1]
+while index != -1:
+    result.append(arr[index])
+    index = prev[index]
 
-for i in lis:
-    print(i,end=" ")
+# 결과 출력
+print(len(lis))
+print(' '.join(map(str, result[::-1])))
 
 '''
 result = []
